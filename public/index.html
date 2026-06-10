@@ -4,98 +4,262 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>ShieldGuard Security</title>
-
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-:root { --bg: #0b1020; --card: #141d38; --card2: #1a2548; --text: #ffffff; --sub: #9ca3af; --primary: #6d5dfc; --secondary: #4f7cff; --success: #22c55e; --danger: #ef4444; }
-body.light { --bg: #f4f7ff; --card: #ffffff; --card2: #eef2ff; --text: #111827; --sub: #6b7280; }
-* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; user-select: none; }
-input { user-select: auto; }
-body { background: var(--bg); color: var(--text); min-height: 100vh; padding-bottom: 90px; transition: 0.3s; overflow-x: hidden; }
-.view { display: none; } .view.active { display: block; animation: slideUpFade 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+/* ===================================
+   LIQUID GLASSMORPHISM (iOS 26 Style)
+   =================================== */
+:root {
+    --primary: #6d5dfc; --secondary: #4f7cff; 
+    --success: #22c55e; --danger: #ef4444;
+    --text: #ffffff; --sub: rgba(255,255,255,0.7);
+}
+
+body.light {
+    --text: #0f172a; 
+    --sub: rgba(15, 23, 42, 0.7);
+}
+
+* { 
+    margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; 
+    -webkit-tap-highlight-color: transparent; -webkit-touch-callout: none;
+    -webkit-user-select: none; user-select: none;
+}
+input { -webkit-user-select: auto; user-select: auto; }
+
+/* LIQUID BACKGROUND ANIMATION */
+@keyframes liquidBg {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+body { 
+    background: linear-gradient(-45deg, #0f172a, #1e1b4b, #09090b, #312e81);
+    background-size: 400% 400%;
+    animation: liquidBg 15s ease infinite;
+    color: var(--text); min-height: 100vh; padding-bottom: 110px; 
+    transition: 0.3s; overflow-x: hidden; 
+}
+
+body.light {
+    background: linear-gradient(-45deg, #f0f9ff, #e0e7ff, #f3e8ff, #dbeafe);
+    background-size: 400% 400%;
+}
+
+/* THE TRUE GLASS EFFECT */
+.glass {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
+    border-radius: 24px;
+}
+body.light .glass {
+    background: rgba(255, 255, 255, 0.35);
+    border: 1px solid rgba(15, 23, 42, 0.15);
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.05);
+}
+
+/* GLASS ICON CONTAINER */
+.glass-icon {
+    display: inline-flex; justify-content: center; align-items: center;
+    width: 44px; height: 44px; border-radius: 14px;
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    font-size: 20px; text-decoration: none; color: var(--text);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    transition: 0.3s ease;
+}
+.glass-icon:active { transform: scale(0.9); background: rgba(255,255,255,0.15); }
+body.light .glass-icon { background: rgba(255,255,255,0.6); border: 1px solid rgba(15, 23, 42, 0.2); }
+
+.view { display: none; }
+.view.active { display: block; animation: slideUpFade 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
 @keyframes slideUpFade { from { opacity: 0; transform: translateY(20px) scale(0.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
-.header { padding: 18px; display: flex; justify-content: space-between; align-items: center; }
-.logo { font-size: 20px; font-weight: 700; }
-.theme-btn { width: 44px; height: 44px; border: none; border-radius: 14px; background: var(--card); color: var(--text); cursor: pointer; font-size: 18px; }
-.banner { margin: 0 16px; padding: 24px; border-radius: 24px; background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; position: relative; overflow: hidden; }
-.banner h1 { font-size: 24px; margin-bottom: 8px; position: relative; z-index: 2; }
-.banner p { opacity: .9; line-height: 1.4; font-size: 14px; position: relative; z-index: 2; }
-.quick-actions { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; padding: 16px; }
-.action { background: var(--card); padding: 18px; border-radius: 20px; cursor: pointer; border: 1px solid rgba(255,255,255,0.03); }
-.action span { display: block; font-size: 24px; margin-bottom: 10px; } .action h3 { font-size: 14px; color: var(--text); }
-.section { padding: 10px 16px; } .section-title { font-size: 18px; font-weight: 700; margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
-.scan-card { background: var(--card); padding: 20px; border-radius: 22px; margin-bottom: 16px; border: 1px solid rgba(255,255,255,0.03); }
-.scan-card h3 { margin-bottom: 6px; font-size: 16px; } .scan-card p { font-size: 13px; color: var(--sub); margin-bottom: 16px; }
-.btn { width: 100%; padding: 14px; border: none; border-radius: 14px; background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; font-weight: 600; cursor: pointer; }
-.btn-danger { background: rgba(239, 68, 68, 0.1); color: var(--danger); }
-.input-group { margin-bottom: 16px; } .input-group input { width: 100%; padding: 14px; border-radius: 14px; border: 1px solid rgba(128,128,128,0.2); background: var(--bg); color: var(--text); outline: none; }
-.activity { background: var(--card); padding: 16px; border-radius: 18px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; font-size: 14px; border: 1px solid rgba(255,255,255,0.03); cursor: pointer; }
-.activity span.name { max-width: 65%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 500; }
-.status-badge { font-weight: 600; font-size: 11px; padding: 6px 12px; border-radius: 8px; letter-spacing: 0.5px; }
-.safe { color: var(--success); background: rgba(34, 197, 94, 0.1); } .warning { color: var(--danger); background: rgba(239, 68, 68, 0.1); } .process { color: var(--secondary); background: rgba(79, 124, 255, 0.1); }
-.empty-state { text-align: center; color: var(--sub); padding: 40px 10px; font-size: 14px; }
-.radar-container { text-align: center; padding: 40px 20px; background: var(--card); border-radius: 24px; }
-.radar { width: 70px; height: 70px; border-radius: 50%; background: rgba(109, 93, 252, 0.2); margin: 0 auto 20px auto; position: relative; animation: pulse-radar 1.5s infinite; }
+
+/* HEADER */
+.header { padding: 20px; display: flex; justify-content: space-between; align-items: center; }
+.logo { font-size: 20px; font-weight: 700; display: flex; align-items: center; gap: 10px; }
+.theme-btn { border: none; cursor: pointer; color: var(--text); }
+
+/* VIDEO BACKGROUND STYLES */
+.bg-video {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    object-fit: cover;
+    z-index: 0;
+    opacity: 0.4; /* Ubah angka ini (0.1 - 1.0) untuk transparansi video */
+    pointer-events: none;
+    border-radius: inherit;
+}
+.content-wrapper {
+    position: relative;
+    z-index: 1;
+}
+
+/* BANNER */
+.banner { margin: 0 16px; padding: 24px; background: linear-gradient(135deg, rgba(109, 93, 252, 0.6), rgba(79, 124, 255, 0.6)); position: relative; overflow: hidden; border: 1px solid rgba(255, 255, 255, 0.2); }
+body.light .banner { border: 1px solid rgba(15, 23, 42, 0.1); }
+.banner h1 { font-size: 24px; margin-bottom: 8px; font-weight: 700; color: #fff; }
+.banner p { font-size: 14px; color: rgba(255,255,255,0.9); }
+
+/* GRID & CARDS */
+.quick-actions { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; padding: 16px; }
+.action { padding: 20px; cursor: pointer; transition: 0.3s; text-align: center; }
+.action:active { transform: scale(0.95); }
+.action h3 { font-size: 14px; margin-top: 12px; font-weight: 600; }
+
+.section { padding: 10px 16px; }
+.section-title { font-size: 18px; font-weight: 700; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+
+.scan-card { padding: 20px; margin-bottom: 16px; transition: 0.3s; }
+.scan-card.profile-card { padding-top: 32px; margin-top: 8px; }
+.scan-card h3 { margin-bottom: 8px; font-size: 16px; display: flex; align-items: center; gap: 10px; }
+.scan-card p { font-size: 13px; color: var(--sub); margin-bottom: 16px; line-height: 1.5; }
+
+/* INPUTS & BUTTONS */
+.input-group { margin-bottom: 16px; } 
+.input-group input { 
+    width: 100%; padding: 16px; border-radius: 16px; 
+    background: rgba(255, 255, 255, 0.07); border: 1px solid rgba(255,255,255,0.2); 
+    color: var(--text); outline: none; font-size: 14px; transition: 0.3s;
+    backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+}
+body.light .input-group input { background: rgba(0,0,0,0.03); border: 1px solid rgba(0,0,0,0.15); color: var(--text); }
+.input-group input:focus { border-color: var(--primary); background: rgba(255,255,255,0.12); }
+body.light .input-group input:focus { background: rgba(0,0,0,0.06); }
+
+.btn { 
+    width: 100%; padding: 16px; border: none; border-radius: 16px; 
+    background: linear-gradient(135deg, var(--primary), var(--secondary)); 
+    color: white; font-weight: 600; font-size: 15px; cursor: pointer; 
+    box-shadow: 0 4px 15px rgba(109, 93, 252, 0.3); transition: 0.2s; 
+}
+.btn:active { transform: scale(0.96); }
+.btn-danger { background: rgba(239, 68, 68, 0.15); color: var(--danger); box-shadow: none; border: 1px solid rgba(239, 68, 68, 0.3); }
+
+/* ACTIVITY LIST */
+.activity { padding: 16px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; font-size: 14px; cursor: pointer; transition: 0.3s; }
+.activity:active { transform: scale(0.98); }
+.activity span.name { max-width: 60%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 500; }
+.status-badge { font-weight: 600; font-size: 11px; padding: 6px 12px; border-radius: 10px; letter-spacing: 0.5px; backdrop-filter: blur(5px); }
+.safe { color: #4ade80; background: rgba(34, 197, 94, 0.15); border: 1px solid rgba(34, 197, 94, 0.3); } 
+.warning { color: #f87171; background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.3); } 
+.process { color: #60a5fa; background: rgba(79, 124, 255, 0.15); border: 1px solid rgba(79, 124, 255, 0.3); }
+
+/* ENGINE RESULTS */
+.radar-container { text-align: center; padding: 40px 20px; }
+.radar { width: 70px; height: 70px; border-radius: 50%; background: rgba(109, 93, 252, 0.3); margin: 0 auto 20px auto; position: relative; animation: pulse-radar 1.5s infinite; border: 2px solid rgba(255,255,255,0.2); }
 .radar::after { content: '🛡️'; font-size: 24px; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); }
-@keyframes pulse-radar { 0% { transform: scale(0.8); box-shadow: 0 0 0 0 rgba(109, 93, 252, 0.6); } 100% { transform: scale(1.5); box-shadow: 0 0 0 25px rgba(109, 93, 252, 0); } }
-.engine-summary { background: var(--card); padding: 16px; border-radius: 18px; margin-bottom: 16px; text-align: center; }
-.engine-summary h2 { font-size: 24px; margin-bottom: 4px; } .engine-summary p { font-size: 12px; color: var(--sub); }
-.target-title { font-size: 13px; color: var(--primary); font-weight: 600; margin-bottom: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: center; }
-.engine-list { background: var(--card); border-radius: 20px; padding: 10px; }
-.engine-item { display: flex; justify-content: space-between; align-items: center; padding: 14px; border-bottom: 1px solid rgba(128,128,128,0.1); font-size: 13px; animation: fadeInUp 0.4s ease forwards; opacity: 0; }
-@keyframes fadeInUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-.engine-name { font-weight: 500; display: flex; align-items: center; gap: 8px; }
-.engine-result { font-weight: 600; font-size: 12px; padding: 4px 10px; border-radius: 6px; }
-.e-bad { color: var(--danger); background: rgba(239, 68, 68, 0.1); } .e-good { color: var(--success); background: rgba(34, 197, 94, 0.1); }
-.bottom-nav { position: fixed; left: 0; right: 0; bottom: 0; display: flex; justify-content: space-around; padding: 12px 10px 24px 10px; background: var(--bg); border-top: 1px solid rgba(128,128,128,0.1); z-index: 100; }
-.nav-item { font-size: 12px; text-align: center; color: var(--sub); cursor: pointer; padding: 8px; flex: 1; border-radius: 12px; }
-.nav-item.active { color: var(--primary); font-weight: 600; } .nav-icon { font-size: 22px; display: block; margin-bottom: 4px; }
-#toast { position: fixed; left: 50%; bottom: 100px; transform: translateX(-50%) translateY(20px); background: var(--text); color: var(--bg); padding: 12px 24px; border-radius: 30px; font-size: 13px; font-weight: 600; opacity: 0; transition: 0.3s; pointer-events: none; z-index: 999; }
+@keyframes pulse-radar { 0% { transform: scale(0.8); box-shadow: 0 0 0 0 rgba(109, 93, 252, 0.6); } 100% { transform: scale(1.5); box-shadow: 0 0 0 30px rgba(109, 93, 252, 0); } }
+
+.engine-summary { padding: 20px; margin-bottom: 16px; text-align: center; }
+.engine-summary h2 { font-size: 28px; margin-bottom: 4px; font-weight: 800; }
+.target-title { font-size: 13px; color: var(--text); margin-bottom: 16px; text-align: center; text-overflow: ellipsis; overflow: hidden; padding: 12px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 14px; }
+body.light .target-title { background: rgba(0,0,0,0.03); border: 1px solid rgba(0,0,0,0.05); }
+
+.engine-list { padding: 10px; }
+.engine-item { display: flex; justify-content: space-between; align-items: center; padding: 14px; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 13px; animation: fadeInUp 0.4s ease forwards; opacity: 0; }
+body.light .engine-item { border-bottom: 1px solid rgba(0,0,0,0.05); }
+.engine-item:last-child { border-bottom: none; }
+.engine-name { font-weight: 500; display: flex; align-items: center; gap: 10px; }
+.engine-result { font-weight: 600; font-size: 12px; }
+.e-bad { color: #f87171; } .e-good { color: #4ade80; }
+
+/* FLOATING DOCK (BOTTOM NAV) */
+.bottom-nav { 
+    position: fixed; left: 20px; right: 20px; bottom: 20px; 
+    display: flex; justify-content: space-around; padding: 10px; 
+    z-index: 100; border-radius: 24px;
+}
+.nav-item { font-size: 11px; text-align: center; color: var(--sub); cursor: pointer; padding: 10px; flex: 1; transition: 0.3s; border-radius: 16px; }
+.nav-item.active { color: var(--text); background: rgba(255,255,255,0.1); font-weight: 600; } 
+body.light .nav-item.active { background: rgba(0,0,0,0.06); }
+.nav-item.active .nav-icon { transform: translateY(-2px) scale(1.1); color: var(--primary); }
+.nav-icon { font-size: 20px; display: block; margin-bottom: 4px; transition: 0.3s; }
+
+/* MODAL & TOAST */
+#toast { position: fixed; left: 50%; bottom: 120px; transform: translateX(-50%) translateY(20px); background: rgba(0,0,0,0.8); color: white; backdrop-filter: blur(10px); padding: 14px 28px; border-radius: 30px; font-size: 13px; font-weight: 600; opacity: 0; transition: 0.3s; pointer-events: none; z-index: 999; border: 1px solid rgba(255,255,255,0.1); }
 #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-.modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.6); backdrop-filter: blur(4px); align-items: flex-end; justify-content: center; opacity: 0; transition: 0.3s; }
+
+.modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.4); backdrop-filter: blur(8px); align-items: flex-end; justify-content: center; opacity: 0; transition: 0.3s; }
 .modal.show { display: flex; opacity: 1; }
-.modal-content { background: var(--card); width: 100%; max-height: 85vh; border-radius: 24px 24px 0 0; padding: 24px; overflow-y: auto; transform: translateY(100%); transition: 0.3s; }
+.modal-content { width: 100%; max-height: 85vh; border-radius: 32px 32px 0 0; padding: 24px; overflow-y: auto; transform: translateY(100%); transition: 0.4s cubic-bezier(0.16, 1, 0.3, 1); border-bottom: none; }
 .modal.show .modal-content { transform: translateY(0); }
-.modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-.close-btn { color: var(--sub); font-size: 28px; font-weight: bold; cursor: pointer; line-height: 1; }
+.modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+.close-btn { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.1); border-radius: 50%; font-size: 20px; cursor: pointer; color: var(--text); }
+
+/* ABOUT ME SECTION STYLES */
+.social-links { display: flex; justify-content: center; gap: 16px; margin: 20px 0; }
+img.profile-img {
+    width: 80px; height: 80px; border-radius: 50%;
+    object-fit: cover; margin: 0 auto 16px auto; display: block;
+    border: 2px solid rgba(255,255,255,0.3);
+    box-shadow: 0 8px 20px rgba(109, 93, 252, 0.3);
+    background: rgba(255,255,255,0.1);
+}
+.social-icon-img {
+    width: 22px; height: 22px;
+    object-fit: contain;
+    transition: 0.3s;
+}
+
+/* FIX BUG: Ikon sosial media menjadi hilang saat light mode */
+body.light .social-icon-img {
+    filter: brightness(0); /* Sebelumnya invert(1) membuat ikon kembali putih, ini membuatnya hitam pekat */
+}
 </style>
 </head>
 <body>
 
 <div class="header">
-    <div class="logo">🛡️ ShieldGuard Pro</div>
-    <button class="theme-btn" id="themeToggleBtn">☀️</button>
+    <div class="logo"><span class="glass-icon" style="width: 36px; height: 36px; font-size: 16px;">🛡️</span> ShieldGuard</div>
+    <button class="theme-btn glass-icon" id="themeToggleBtn">☀️</button>
 </div>
 
 <div id="view-home" class="view active">
-    <div class="banner">
-        <h1>Cloud Secured</h1>
-        <p>Sistem Backend Vercel berjalan dan mengamankan aktivitas Anda.</p>
+    <div class="banner glass">
+        <video autoplay loop muted playsinline class="bg-video">
+            <source src="https://drive.google.com/uc?export=download&id=ID_VIDEO_KAMU_DISINI" type="video/mp4">
+        </video>
+        
+        <div class="content-wrapper">
+            <h1>Cloud Secured</h1>
+            <p>Sistem Backend Vercel aktif melindungi perangkat Anda secara real-time.</p>
+        </div>
     </div>
     <div class="section" style="margin-top: 10px;">
-        <div class="section-title">📊 Detail Mesin Terakhir</div>
+        <div class="section-title"><span class="glass-icon" style="width:28px; height:28px; font-size:12px;">📊</span> Detail Mesin Terakhir</div>
         <div id="homeEngineDetails"></div> 
     </div>
 </div>
 
 <div id="view-scanner" class="view">
     <div class="quick-actions" style="padding-top: 0;">
-        <div class="action" onclick="document.getElementById('urlInput').focus()"><span>🌐</span><h3>Scan URL</h3></div>
-        <div class="action" onclick="document.getElementById('fileUploader').click()"><span>📁</span><h3>Scan File</h3></div>
+        <div class="action glass" onclick="document.getElementById('urlInput').focus()">
+            <span class="glass-icon" style="width: 56px; height: 56px; font-size: 26px; margin-bottom: 12px;">🌐</span>
+            <h3>Scan URL</h3>
+        </div>
+        <div class="action glass" onclick="document.getElementById('fileUploader').click()">
+            <span class="glass-icon" style="width: 56px; height: 56px; font-size: 26px; margin-bottom: 12px;">📁</span>
+            <h3>Scan File</h3>
+        </div>
     </div>
     <div class="section">
-        <div class="scan-card">
-            <h3>🌐 URL / Hash Scanner</h3>
-            <p>Periksa website atau tempel kode Hash.</p>
-            <div class="input-group">
-                <input type="text" id="urlInput" placeholder="https://... atau Hash" autocomplete="off">
-            </div>
+        <div class="scan-card glass">
+            <h3><span class="glass-icon" style="width:32px; height:32px; font-size:14px;">🔗</span> URL / Hash Scanner</h3>
+            <p>Periksa keamanan tautan website atau tempel kode Hash (MD5/SHA).</p>
+            <div class="input-group"><input type="text" id="urlInput" placeholder="https://... atau Hash" autocomplete="off"></div>
             <button class="btn" onclick="scanHandler('text')">Mulai Pindai</button>
         </div>
-        <div class="scan-card">
-            <h3>📁 File Scanner (Fast Hash)</h3>
-            <p>Teknologi Hash Lokal. Maks ukuran file 4MB jika upload.</p>
-            <button class="btn" onclick="document.getElementById('fileUploader').click()" style="background: var(--card2); border: 1px solid var(--primary); color: var(--text);">Pilih File</button>
+        <div class="scan-card glass">
+            <h3><span class="glass-icon" style="width:32px; height:32px; font-size:14px;">⚡</span> File Scanner (Fast)</h3>
+            <p>Teknologi Hash Lokal. Maks ukuran file 4MB jika perlu diunggah.</p>
+            <button class="btn" onclick="document.getElementById('fileUploader').click()" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: var(--text);">Pilih File</button>
             <input type="file" id="fileUploader" style="display: none;" onchange="scanHandler('file')">
         </div>
     </div>
@@ -103,26 +267,52 @@ body { background: var(--bg); color: var(--text); min-height: 100vh; padding-bot
 
 <div id="view-history" class="view">
     <div class="section">
-        <div class="section-title">📜 Riwayat Tersimpan</div>
+        <div class="section-title"><span class="glass-icon" style="width:28px; height:28px; font-size:12px;">📜</span> Riwayat Tersimpan</div>
         <div id="fullActivityList"></div>
     </div>
 </div>
 
 <div id="view-settings" class="view">
     <div class="section">
-        <div class="scan-card">
-            <h3>🛡️ Keamanan Server</h3>
-            <p>Aplikasi ini sekarang terhubung dengan aman ke server backend Vercel. Kunci API dilindungi oleh Enkripsi Server.</p>
+        
+        <div class="scan-card glass profile-card" style="text-align: center; position: relative; overflow: hidden;">
+            
+            <video autoplay loop muted playsinline class="bg-video">
+                <source src="https://drive.google.com/uc?export=download&id=1mGMEhcFPgbGSTxJ4557YmchElFoi5jyV/view?usp=drivesdk" type="video/mp4">
+            </video>
+            
+            <div class="content-wrapper">
+                <img src="profile.png" alt="Profile" class="profile-img" onerror="this.onerror=null; this.src='https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png';">
+                
+                <h2 style="font-size: 20px; font-weight: 700; margin-bottom: 4px;">Rizky Kurniawan</h2>
+                <p style="font-size: 13px; color: var(--primary); font-weight: 600;">Developer & Creator</p>
+                
+                <div class="social-links">
+                    <a href="#" class="glass-icon"><img src="https://cdn.simpleicons.org/tiktok/ffffff" alt="TikTok" class="social-icon-img"></a>
+                    <a href="#" class="glass-icon"><img src="https://cdn.simpleicons.org/instagram/ffffff" alt="Instagram" class="social-icon-img"></a>
+                    <a href="#" class="glass-icon"><img src="https://cdn.simpleicons.org/telegram/ffffff" alt="Telegram" class="social-icon-img"></a>
+                    <a href="#" class="glass-icon"><img src="https://cdn.simpleicons.org/discord/ffffff" alt="Discord" class="social-icon-img"></a>
+                </div>
+                
+                <div style="margin-top: 24px; padding-top: 16px; border-top: 1px solid rgba(255,255,255,0.1);">
+                    <p style="font-size: 12px; color: var(--sub);">© 2026 Rizky Kurniawan. All Rights Reserved.<br>Liquid Glass UI v2.0</p>
+                </div>
+            </div>
         </div>
-        <div class="scan-card">
-            <h3>🗑️ Manajemen Cache</h3>
-            <p>Hapus semua riwayat pemindaian yang tersimpan di memori perangkat ini.</p>
-            <button class="btn btn-danger" onclick="clearHistory()">Bersihkan Riwayat</button>
+        
+        <div class="scan-card glass">
+            <h3><span class="glass-icon" style="width:32px; height:32px; font-size:14px;">🗑️</span> Cache & Data</h3>
+            <p>Bersihkan riwayat pemindaian dari memori perangkat.</p>
+            <button class="btn btn-danger" style="margin-top: 10px;" onclick="clearHistory()">Bersihkan Riwayat</button>
+        </div>
+        <div class="scan-card glass">
+            <h3><span class="glass-icon" style="width:32px; height:32px; font-size:14px;">️❗</span> About </h3>
+            <p>Aplikasi ini di buat oleh seorang pemuda lulusan SMK yang ingin membuat suatu keinginan dengan karyanya sendiri. Di buat ditengah malam dengan kesunyian, keheningan, dan serta penuh ketenangan.</p>
         </div>
     </div>
 </div>
 
-<div class="bottom-nav">
+<div class="bottom-nav glass">
     <div class="nav-item active" onclick="switchNav('view-home', 0)"><span class="nav-icon">🏠</span>Home</div>
     <div class="nav-item" onclick="switchNav('view-scanner', 1)"><span class="nav-icon">🛡️</span>Scanner</div>
     <div class="nav-item" onclick="switchNav('view-history', 2)"><span class="nav-icon">📜</span>History</div>
@@ -132,17 +322,19 @@ body { background: var(--bg); color: var(--text); min-height: 100vh; padding-bot
 <div id="toast"></div>
 
 <div id="detailModal" class="modal">
-    <div class="modal-content">
+    <div class="modal-content glass">
         <div class="modal-header">
-            <div style="font-size: 16px; font-weight: 700;">Detail Riwayat</div>
-            <span class="close-btn" onclick="closeModal()">&times;</span>
+            <div style="font-size: 18px; font-weight: 700; display:flex; align-items:center; gap:10px;">
+                <span class="glass-icon" style="width:32px; height:32px; font-size:14px;">📊</span> Detail Analisis
+            </div>
+            <div class="close-btn" onclick="closeModal()">✕</div>
         </div>
         <div id="modalContentBody"></div>
     </div>
 </div>
 
 <script>
-// SPA NAVIGATION & THEME (Sama persis)
+// UI LOGIC
 function switchNav(viewId, index) {
     document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
     document.getElementById(viewId).classList.add('active');
@@ -160,12 +352,12 @@ themeBtn.addEventListener("click", () => {
     localStorage.setItem("theme", isLight ? "light" : "dark");
 });
 
-function showToast(msg) {
-    const toast = document.getElementById("toast"); toast.innerText = msg;
-    toast.classList.add("show"); setTimeout(() => toast.classList.remove("show"), 2500);
+function showToast(msg) { 
+    const toast = document.getElementById("toast"); toast.innerText = msg; 
+    toast.classList.add("show"); setTimeout(() => toast.classList.remove("show"), 2500); 
 }
 
-// DATA MANAGEMENT
+// DATA LOGIC
 function getHistory() { return JSON.parse(localStorage.getItem("scanHistory") || "[]"); }
 function saveHistory(target, status, id = null, stats = null, results = null) {
     const history = getHistory();
@@ -182,208 +374,96 @@ function updateHistoryData(target, newStatus, stats, results) {
         renderData();
     }
 }
-function clearHistory() {
-    if(confirm("Hapus semua riwayat?")) { localStorage.removeItem("scanHistory"); renderData(); showToast("Riwayat bersih."); }
-}
+function clearHistory() { if(confirm("Hapus semua riwayat?")) { localStorage.removeItem("scanHistory"); renderData(); showToast("Riwayat bersih."); } }
 
-// LOGIKA RENDER (HOME & HISTORY)
+// RENDER LOGIC
 function renderData() {
     const history = getHistory();
     const fullList = document.getElementById("fullActivityList");
     const homeEngine = document.getElementById("homeEngineDetails");
-    
     if (history.length === 0) {
-        fullList.innerHTML = `<div class="empty-state">Belum ada aktivitas.</div>`;
-        homeEngine.innerHTML = `<div class="empty-state">Lakukan pemindaian untuk melihat detail mesin keamanan di sini.</div>`;
+        fullList.innerHTML = `<div class="scan-card glass empty-state">Belum ada aktivitas tersimpan.</div>`;
+        homeEngine.innerHTML = `<div class="scan-card glass empty-state">Lakukan pemindaian untuk melihat analisis mesin keamanan.</div>`;
         return;
     }
-
     fullList.innerHTML = history.map((item, index) => {
         let css = item.status === "SAFE" ? "safe" : (item.status === "RISK" ? "warning" : "process");
-        let txt = item.status === "PROCESS" ? "Memproses" : item.status;
-        return `<div class="activity" onclick="openHistoryDetail(${index})">
-                    <span class="name">${item.target}</span><span class="status-badge ${css}">${txt}</span>
-                </div>`;
+        return `<div class="activity glass" onclick="openHistoryDetail(${index})"><span class="name">${item.target}</span><span class="status-badge ${css}">${item.status === "PROCESS" ? "Memproses" : item.status}</span></div>`;
     }).join("");
-
     const latest = history[0];
     if (latest.status === "PROCESS") {
-        homeEngine.innerHTML = `
-            <div class="radar-container">
-                <div class="radar"></div>
-                <h3 style="margin-bottom:8px;">Sedang Menganalisa...</h3>
-                <p style="color:var(--sub); font-size:13px;">Target: ${latest.target}</p>
-            </div>
-        `;
-    } else if (latest.results) {
-        homeEngine.innerHTML = generateEngineHTML(latest);
-    }
+        homeEngine.innerHTML = `<div class="radar-container glass"><div class="radar"></div><h3 style="margin-bottom:8px;">Menganalisa...</h3><p style="color:var(--sub); font-size:13px; word-break: break-all;">${latest.target}</p></div>`;
+    } else if (latest.results) { homeEngine.innerHTML = generateEngineHTML(latest); }
 }
 
 function generateEngineHTML(item) {
     const total = item.stats.malicious + item.stats.suspicious + item.stats.undetected + item.stats.harmless;
     const isRisk = item.stats.malicious > 0 || item.stats.suspicious > 0;
-    const textColor = isRisk ? "var(--danger)" : "var(--success)";
-    
-    let html = `
-        <div class="target-title">Target: ${item.target}</div>
-        <div class="engine-summary">
-            <h2 style="color:${textColor}">${item.stats.malicious + item.stats.suspicious} / ${total}</h2>
-            <p>Mesin Mendeteksi Bahaya</p>
-        </div>
-        <div class="engine-list">
-    `;
-
-    let engineKeys = Object.keys(item.results).sort((a, b) => {
+    let html = `<div class="target-title glass">${item.target}</div><div class="engine-summary glass"><h2 style="color:${isRisk ? "var(--danger)":"var(--success)"}">${item.stats.malicious + item.stats.suspicious} <span style="font-size:16px; color:var(--sub);">/ ${total}</span></h2><p>Mesin Mendeteksi Bahaya</p></div><div class="engine-list glass">`;
+    let keys = Object.keys(item.results).sort((a, b) => {
         let badA = item.results[a].category === "malicious" || item.results[a].category === "suspicious";
         let badB = item.results[b].category === "malicious" || item.results[b].category === "suspicious";
         return (badA === badB) ? 0 : badA ? -1 : 1;
     });
-
-    engineKeys.forEach((engine, idx) => {
-        let res = item.results[engine];
-        let isBad = res.category === "malicious" || res.category === "suspicious";
-        let cssClass = isBad ? "e-bad" : "e-good";
-        let resultText = isBad ? res.result : "Bersih";
-        html += `<div class="engine-item" style="animation-delay: ${idx < 20 ? (idx * 0.05) : 0}s">
-                <span class="engine-name">${isBad ? '⚠️' : '✅'} ${engine}</span>
-                <span class="engine-result ${cssClass}">${resultText}</span>
-            </div>`;
+    keys.forEach((engine, idx) => {
+        let res = item.results[engine]; let isBad = res.category === "malicious" || res.category === "suspicious";
+        let icon = isBad ? '⚠️' : '✅';
+        html += `<div class="engine-item" style="animation-delay: ${idx < 20 ? (idx * 0.05) : 0}s"><span class="engine-name"><span class="glass-icon" style="width:28px; height:28px; font-size:12px;">${icon}</span> ${engine}</span><span class="engine-result ${isBad ? 'e-bad':'e-good'}">${isBad ? res.result : "Bersih"}</span></div>`;
     });
     return html + `</div>`;
 }
 
 function openHistoryDetail(index) {
-    const item = getHistory()[index];
-    if (item.status === "PROCESS") return showToast("Masih proses...");
-    if (!item.results) return showToast("Detail tidak tersedia.");
+    const item = getHistory()[index]; if (item.status === "PROCESS") return showToast("Masih proses...");
     document.getElementById('modalContentBody').innerHTML = generateEngineHTML(item);
     document.getElementById('detailModal').classList.add('show');
 }
 function closeModal() { document.getElementById('detailModal').classList.remove('show'); }
 
-// ==========================================
-// TEKNOLOGI BARU: HASHING LOKAL
-// ==========================================
+// SCANNER LOGIC (API VERCEL)
 async function calculateLocalHash(file) {
-    const arrayBuffer = await file.arrayBuffer();
-    const hashBuffer = await crypto.subtle.digest('SHA-256', arrayBuffer);
-    const hashArray = Array.from(new Uint8Array(hashBuffer));
-    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    const buffer = await file.arrayBuffer(); const hashBuffer = await crypto.subtle.digest('SHA-256', buffer);
+    return Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, '0')).join('');
 }
-
-// POLLING MENGGUNAKAN BACKEND API
-async function pollAnalysis(analysisId, targetName) {
-    const checkInterval = setInterval(async () => {
+async function pollAnalysis(id, name) {
+    const interval = setInterval(async () => {
         try {
-            const res = await fetch(`/api/scan/poll/${analysisId}`);
-            const data = await res.json();
+            const res = await fetch(`/api/scan/poll/${id}`); const data = await res.json();
             if (data.data && data.data.attributes.status === "completed") {
-                clearInterval(checkInterval); 
-                const stats = data.data.attributes.stats;
-                const results = data.data.attributes.results;
-                const isRisk = stats.malicious > 0 || stats.suspicious > 0;
-                updateHistoryData(targetName, isRisk ? "RISK" : "SAFE", stats, results);
+                clearInterval(interval);
+                const stats = data.data.attributes.stats; const results = data.data.attributes.results;
+                updateHistoryData(name, (stats.malicious > 0 || stats.suspicious > 0) ? "RISK" : "SAFE", stats, results);
                 showToast("Analisis Selesai!");
             }
-        } catch (e) { console.error(e); clearInterval(checkInterval); }
-    }, 10000); // Polling setiap 10 detik
+        } catch (e) { clearInterval(interval); }
+    }, 10000);
 }
-
-// SCAN HANDLER BERKOMUNIKASI DENGAN BACKEND (TIDAK LAGI KE VT LANGSUNG)
 async function scanHandler(type) {
     try {
         let endpoint = "", options = {}, targetName = "";
-
         if (type === 'text') {
-            const input = document.getElementById('urlInput').value.trim();
-            if(!input) return showToast("Masukkan URL atau Hash!");
+            const input = document.getElementById('urlInput').value.trim(); if(!input) return showToast("Isi URL/Hash!");
             targetName = input.length > 30 ? input.substring(0,20)+"..." : input;
-            
-            if(/^[a-fA-F0-9]{32,64}$/.test(input)) {
-                endpoint = `/api/scan/hash/${input}`;
-                type = 'hash';
-            } else {
-                endpoint = "/api/scan/url";
-                options.method = "POST";
-                options.headers = { "Content-Type": "application/json" };
-                options.body = JSON.stringify({ url: input });
-            }
+            if(/^[a-fA-F0-9]{32,64}$/.test(input)) { endpoint = `/api/scan/hash/${input}`; type = 'hash'; }
+            else { endpoint = "/api/scan/url"; options = { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ url: input }) }; }
         } else if (type === 'file') {
-            const fileInput = document.getElementById('fileUploader');
-            if(!fileInput.files.length) return;
-            const file = fileInput.files[0];
-            targetName = file.name;
-            
-            // CEK UKURAN (Vercel Free max 4MB-4.5MB)
-            if (file.size > 4 * 1024 * 1024) {
-                return showToast("Gagal: Vercel Free membatasi upload maksimal 4MB.");
-            }
-
-            switchNav('view-home', 0);
-            showToast("Menghitung Sidik Jari File...");
-            saveHistory(targetName, "PROCESS");
-
-            // 1. Trik Pintar: Hash Lokal dulu
+            const file = document.getElementById('fileUploader').files[0]; if(!file) return; targetName = file.name;
+            if (file.size > 4 * 1024 * 1024) return showToast("Max file 4MB!");
+            switchNav('view-home', 0); saveHistory(targetName, "PROCESS");
             const localHash = await calculateLocalHash(file);
-            showToast("Mencari File di Database...");
-            
-            // 2. Tanyakan hash ke Backend
-            const hashCheckRes = await fetch(`/api/scan/hash/${localHash}`);
-            if (hashCheckRes.ok) {
-                const data = await hashCheckRes.json();
-                if (data.data && data.data.type === 'file') {
-                    const stats = data.data.attributes.last_analysis_stats;
-                    const results = data.data.attributes.last_analysis_results;
-                    const isRisk = stats.malicious > 0 || stats.suspicious > 0;
-                    updateHistoryData(targetName, isRisk ? "RISK" : "SAFE", stats, results);
-                    return showToast("Instan! File ini sudah pernah dipindai.");
-                }
+            const hashCheck = await fetch(`/api/scan/hash/${localHash}`);
+            if (hashCheck.ok) {
+                const data = await hashCheck.json();
+                if (data.data) { updateHistoryData(targetName, (data.data.attributes.last_analysis_stats.malicious > 0) ? "RISK" : "SAFE", data.data.attributes.last_analysis_stats, data.data.attributes.last_analysis_results); return showToast("Instan dari Database!"); }
             }
-            
-                        // 3. Jika Hash tidak ketemu (File benar-benar baru di dunia), baru kita UPLOAD
-            showToast("File baru! Mengunggah ke server...");
-            endpoint = "/api/scan/file";
-            const formData = new FormData();
-            formData.append("file", file);
-            options.method = "POST";
-            options.body = formData;
-            type = 'upload';
+            endpoint = "/api/scan/file"; const formData = new FormData(); formData.append("file", file); options = { method: "POST", body: formData }; type = 'upload';
         }
-
-        if(type !== 'file' && type !== 'upload') {
-            switchNav('view-home', 0);
-            saveHistory(targetName, "PROCESS");
-        }
-
-        const response = await fetch(endpoint, options);
-        const data = await response.json();
-
-        // KUSUS HASIL HASH INSTAN (Bukan file upload)
-        if (type === 'hash' && data.data && data.data.type === 'file') {
-            const stats = data.data.attributes.last_analysis_stats;
-            const results = data.data.attributes.last_analysis_results;
-            const isRisk = stats.malicious > 0 || stats.suspicious > 0;
-            updateHistoryData(targetName, isRisk ? "RISK" : "SAFE", stats, results);
-            document.getElementById('urlInput').value = "";
-            return;
-        }
-
-        // UNTUK URL DAN FILE BARU YANG DI-UPLOAD
-        if (data.data) {
-            const analysisId = data.data.id;
-            document.getElementById('urlInput').value = "";
-            if(analysisId) pollAnalysis(analysisId, targetName);
-        } else {
-            updateHistoryData(targetName, "GAGAL", null, null);
-            showToast("Error dari server: " + (data.error?.message || "Gagal"));
-        }
-    } catch (e) {
-        console.error(e);
-        showToast("Terjadi kesalahan jaringan/server.");
-    }
+        if(type !== 'file' && type !== 'upload') { switchNav('view-home', 0); saveHistory(targetName, "PROCESS"); }
+        const response = await fetch(endpoint, options); const data = await response.json();
+        if (type === 'hash' && data.data) { updateHistoryData(targetName, (data.data.attributes.last_analysis_stats.malicious > 0) ? "RISK" : "SAFE", data.data.attributes.last_analysis_stats, data.data.attributes.last_analysis_results); return; }
+        if (data.data) { if(data.data.id) pollAnalysis(data.data.id, targetName); } else { updateHistoryData(targetName, "GAGAL", null, null); showToast("Error Server"); }
+    } catch (e) { showToast("Koneksi gagal"); }
 }
-
 renderData();
 </script>
 </body>
