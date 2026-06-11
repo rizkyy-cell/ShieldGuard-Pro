@@ -10,7 +10,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 /* ===================================
-   LIQUID GLASSMORPHISM (iOS 26 Style)
+   LIQUID GLASSMORPHISM (OPTIMAL UI)
    =================================== */
 :root {
     --primary: #6d5dfc; --secondary: #4f7cff; 
@@ -41,7 +41,8 @@ body {
     background: linear-gradient(-45deg, #0f172a, #1e1b4b, #09090b, #312e81);
     background-size: 400% 400%;
     animation: liquidBg 15s ease infinite;
-    color: var(--text); min-height: 100vh; padding-bottom: 110px; 
+    color: var(--text); min-height: 100vh; 
+    padding-bottom: 130px; /* Ruang ekstra agar konten bisa discroll sampai bawah */
     transition: 0.3s; overflow-x: hidden; 
 }
 
@@ -65,7 +66,6 @@ body.light .glass {
     box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.05);
 }
 
-/* GLASS ICON CONTAINER */
 .glass-icon {
     display: inline-flex; justify-content: center; align-items: center;
     width: 44px; height: 44px; border-radius: 14px;
@@ -83,26 +83,18 @@ body.light .glass-icon { background: rgba(255,255,255,0.6); border: 1px solid rg
 .view.active { display: block; animation: slideUpFade 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
 @keyframes slideUpFade { from { opacity: 0; transform: translateY(20px) scale(0.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
 
-/* HEADER */
-.header { padding: 20px; display: flex; justify-content: space-between; align-items: center; }
+/* HEADER (Diturunkan sedikit agar tidak nempel ke atas) */
+.header { padding: 40px 20px 20px 20px; display: flex; justify-content: space-between; align-items: center; }
 .logo { font-size: 20px; font-weight: 700; display: flex; align-items: center; gap: 10px; }
 .theme-btn { border: none; cursor: pointer; color: var(--text); }
 
 /* VIDEO BACKGROUND STYLES */
 .bg-video {
-    position: absolute;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    object-fit: cover;
-    z-index: 0;
-    opacity: 0.8; /* Terang dan bening */
-    pointer-events: none;
-    border-radius: inherit;
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    object-fit: cover; z-index: 0; opacity: 0.8; 
+    pointer-events: none; border-radius: inherit;
 }
-.content-wrapper {
-    position: relative;
-    z-index: 1;
-}
+.content-wrapper { position: relative; z-index: 1; }
 
 /* BANNER */
 .banner { margin: 0 16px; padding: 24px; background: rgba(255, 255, 255, 0.05); position: relative; overflow: hidden; border: 1px solid rgba(255, 255, 255, 0.2); }
@@ -153,33 +145,43 @@ body.light .input-group input:focus { background: rgba(0,0,0,0.06); }
 .safe { color: #4ade80; background: rgba(34, 197, 94, 0.15); border: 1px solid rgba(34, 197, 94, 0.3); } 
 .warning { color: #f87171; background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.3); } 
 .process { color: #60a5fa; background: rgba(79, 124, 255, 0.15); border: 1px solid rgba(79, 124, 255, 0.3); }
-.canceled { color: #cbd5e1; background: rgba(203, 213, 225, 0.15); border: 1px solid rgba(203, 213, 225, 0.3); } /* Badge untuk scan yang dibatalkan */
+.canceled { color: #cbd5e1; background: rgba(203, 213, 225, 0.15); border: 1px solid rgba(203, 213, 225, 0.3); }
 
 /* ENGINE RESULTS */
 .radar-container { text-align: center; padding: 40px 20px; }
-.radar { width: 70px; height: 70px; border-radius: 50%; background: rgba(109, 93, 252, 0.3); margin: 0 auto 20px auto; position: relative; animation: pulse-radar 1.5s infinite; border: 2px solid rgba(255,255,255,0.2); }
+.radar { width: 70px; height: 70px; border-radius: 50%; background: rgba(109, 93, 252, 0.3); margin: 0 auto 15px auto; position: relative; animation: pulse-radar 1.5s infinite; border: 2px solid rgba(255,255,255,0.2); }
 .radar::after { content: '🛡️'; font-size: 24px; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); }
 @keyframes pulse-radar { 0% { transform: scale(0.8); box-shadow: 0 0 0 0 rgba(109, 93, 252, 0.6); } 100% { transform: scale(1.5); box-shadow: 0 0 0 30px rgba(109, 93, 252, 0); } }
+
+/* PERSENTASE SCAN */
+#scanPercent { font-size: 24px; font-weight: 800; color: var(--primary); margin-bottom: 5px; }
 
 .engine-summary { padding: 20px; margin-bottom: 16px; text-align: center; }
 .engine-summary h2 { font-size: 28px; margin-bottom: 4px; font-weight: 800; }
 .target-title { font-size: 13px; color: var(--text); margin-bottom: 16px; text-align: center; text-overflow: ellipsis; overflow: hidden; padding: 12px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 14px; }
 body.light .target-title { background: rgba(0,0,0,0.03); border: 1px solid rgba(0,0,0,0.05); }
 
+/* PERBAIKAN LIST ENGINE (Opacity Dihapus, Ukuran Diperkecil seperti semula) */
 .engine-list { padding: 10px; }
-.engine-item { display: flex; justify-content: space-between; align-items: center; padding: 14px; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 13px; animation: fadeInUp 0.4s ease forwards; opacity: 0; }
+.engine-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 14px; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 12px; }
 body.light .engine-item { border-bottom: 1px solid rgba(0,0,0,0.05); }
 .engine-item:last-child { border-bottom: none; }
 .engine-name { font-weight: 500; display: flex; align-items: center; gap: 10px; }
 .engine-result { font-weight: 600; font-size: 12px; text-align: right; max-width: 50%; word-wrap: break-word; }
 .e-bad { color: #f87171; } .e-good { color: #4ade80; }
 
-/* FLOATING DOCK (BOTTOM NAV) */
+/* FLOATING DOCK (MENU BAWAH PERMANEN ANTI-MELAYANG) */
 .bottom-nav { 
-    position: fixed; left: 20px; right: 20px; bottom: 20px; 
-    display: flex; justify-content: space-around; padding: 10px; 
-    z-index: 100; border-radius: 24px;
+    position: fixed; left: 0; right: 0; bottom: 0; 
+    display: flex; justify-content: space-around; 
+    padding: 12px 16px 24px 16px; /* Padding bawah lebih luas */
+    z-index: 100; 
+    border-radius: 32px 32px 0 0; /* Pinggiran bulat di atas saja */
+    background: rgba(15, 23, 42, 0.85); /* Solid blur nutupin text dibawahnya */
+    backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px);
+    border-top: 1px solid rgba(255, 255, 255, 0.15);
 }
+body.light .bottom-nav { background: rgba(255, 255, 255, 0.85); border-top: 1px solid rgba(15, 23, 42, 0.15); }
 .nav-item { font-size: 11px; text-align: center; color: var(--sub); cursor: pointer; padding: 10px; flex: 1; transition: 0.3s; border-radius: 16px; }
 .nav-item.active { color: var(--text); background: rgba(255,255,255,0.1); font-weight: 600; } 
 body.light .nav-item.active { background: rgba(0,0,0,0.06); }
@@ -189,28 +191,20 @@ body.light .nav-item.active { background: rgba(0,0,0,0.06); }
 /* MODAL & TOAST */
 #toast { position: fixed; left: 50%; bottom: 120px; transform: translateX(-50%) translateY(20px); background: rgba(0,0,0,0.8); color: white; backdrop-filter: blur(10px); padding: 14px 28px; border-radius: 30px; font-size: 13px; font-weight: 600; opacity: 0; transition: 0.3s; pointer-events: none; z-index: 999; border: 1px solid rgba(255,255,255,0.1); }
 #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-
 .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.4); backdrop-filter: blur(8px); align-items: flex-end; justify-content: center; opacity: 0; transition: 0.3s; }
 .modal.show { display: flex; opacity: 1; }
-.modal-content { width: 100%; max-height: 85vh; border-radius: 32px 32px 0 0; padding: 24px; overflow-y: auto; transform: translateY(100%); transition: 0.4s cubic-bezier(0.16, 1, 0.3, 1); border-bottom: none; }
+.modal-content { width: 100%; max-height: 85vh; border-radius: 32px 32px 0 0; padding: 24px; overflow-y: auto; transform: translateY(100%); transition: 0.4s cubic-bezier(0.16, 1, 0.3, 1); border-bottom: none; padding-bottom: 40px; }
 .modal.show .modal-content { transform: translateY(0); }
 .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
 .close-btn { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.1); border-radius: 50%; font-size: 20px; cursor: pointer; color: var(--text); }
 
-/* ABOUT ME SECTION STYLES */
+/* PROFILE & SOSIAL */
 .social-links { display: flex; justify-content: center; gap: 16px; margin: 20px 0; }
 img.profile-img {
-    width: 80px; height: 80px; border-radius: 50%;
-    object-fit: cover; margin: 0 auto 16px auto; display: block;
-    border: 2px solid rgba(255,255,255,0.3);
-    box-shadow: 0 8px 20px rgba(109, 93, 252, 0.3);
-    background: rgba(255,255,255,0.1);
+    width: 80px; height: 80px; border-radius: 50%; object-fit: cover; margin: 0 auto 16px auto; display: block;
+    border: 2px solid rgba(255,255,255,0.3); box-shadow: 0 8px 20px rgba(109, 93, 252, 0.3); background: rgba(255,255,255,0.1);
 }
-.social-icon-img {
-    width: 22px; height: 22px;
-    object-fit: contain;
-    transition: 0.3s;
-}
+.social-icon-img { width: 22px; height: 22px; object-fit: contain; transition: 0.3s; }
 body.light .social-icon-img { filter: brightness(0); }
 </style>
 </head>
@@ -273,25 +267,20 @@ body.light .social-icon-img { filter: brightness(0); }
 
 <div id="view-settings" class="view">
     <div class="section">
-        
         <div class="scan-card glass profile-card" style="text-align: center; position: relative; overflow: hidden;">
             <video autoplay loop muted playsinline class="bg-video">
                 <source src="bg-video-profile.mp4" type="video/mp4">
             </video>
-            
             <div class="content-wrapper">
                 <img src="profile.png" alt="Profile" class="profile-img" onerror="this.onerror=null; this.src='https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png';">
-                
                 <h2 style="font-size: 20px; font-weight: 700; margin-bottom: 4px;">Rizky Kurniawan</h2>
                 <p style="font-size: 13px; color: var(--primary); font-weight: 600;">Developer & Creator</p>
-                
                 <div class="social-links">
                     <a href="https://www.tiktok.com/@rizky._kurniawan25?_r=1&_t=ZS-97764STUB2C" class="glass-icon"><img src="https://cdn.simpleicons.org/tiktok/ffffff" alt="TikTok" class="social-icon-img"></a>
                     <a href="https://www.instagram.com/rizky._kurniawan25?igsh=MTdyZjZvNHRxajg0cA==" class="glass-icon"><img src="https://cdn.simpleicons.org/instagram/ffffff" alt="Instagram" class="social-icon-img"></a>
                     <a href="https:t.me/rizky_kurniawan25" class="glass-icon"><img src="https://cdn.simpleicons.org/telegram/ffffff" alt="Telegram" class="social-icon-img"></a>
                     <a href="https://discord.gg/Crr8MuVCe" class="glass-icon"><img src="https://cdn.simpleicons.org/discord/ffffff" alt="Discord" class="social-icon-img"></a>
                 </div>
-                
                 <div style="margin-top: 24px; padding-top: 16px; border-top: 1px solid rgba(255,255,255,0.1);">
                     <p style="font-size: 12px; color: var(--sub);">© 2026 Rizky Kurniawan. All Rights Reserved.<br>Liquid Glass UI v2.0</p>
                 </div>
@@ -310,7 +299,7 @@ body.light .social-icon-img { filter: brightness(0); }
     </div>
 </div>
 
-<div class="bottom-nav glass">
+<div class="bottom-nav">
     <div class="nav-item active" onclick="switchNav('view-home', 0)"><span class="nav-icon">🏠</span>Home</div>
     <div class="nav-item" onclick="switchNav('view-scanner', 1)"><span class="nav-icon">🛡️</span>Scanner</div>
     <div class="nav-item" onclick="switchNav('view-history', 2)"><span class="nav-icon">📜</span>History</div>
@@ -337,17 +326,9 @@ let activePolls = {};
 let abortControllers = {};
 
 function cancelScanByTarget(targetName) {
-    // 1. Batalkan request jika sedang upload file atau fetch internet awal
-    if (abortControllers[targetName]) {
-        abortControllers[targetName].abort();
-        delete abortControllers[targetName];
-    }
-    // 2. Batalkan interval proses pengecekan radar (polling)
+    if (abortControllers[targetName]) { abortControllers[targetName].abort(); delete abortControllers[targetName]; }
     for (let id in activePolls) {
-        if (activePolls[id].name === targetName) {
-            clearInterval(activePolls[id].interval);
-            delete activePolls[id];
-        }
+        if (activePolls[id].name === targetName) { clearInterval(activePolls[id].interval); delete activePolls[id]; }
     }
     updateHistoryData(targetName, "BATAL", null, null);
     showToast("Pemindaian Dibatalkan!");
@@ -394,11 +375,9 @@ function updateHistoryData(target, newStatus, stats, results) {
 }
 function clearHistory() { 
     if(confirm("Hapus semua riwayat?")) { 
-        // Bersihkan memori HP dari riwayat dan proses yang nyangkut
         for (let target in abortControllers) abortControllers[target].abort();
         for (let id in activePolls) clearInterval(activePolls[id].interval);
         abortControllers = {}; activePolls = {};
-        
         localStorage.removeItem("scanHistory"); 
         renderData(); 
         showToast("Riwayat berhasil dibersihkan."); 
@@ -425,12 +404,12 @@ function renderData() {
     
     const latest = history[0];
     if (latest.status === "PROCESS") {
-        const safeTargetName = latest.target.replace(/'/g, "\\'"); // Menghindari bug nama file petik
+        const safeTargetName = latest.target.replace(/'/g, "\\'");
         homeEngine.innerHTML = `
         <div class="radar-container glass" style="padding: 30px 20px;">
             <div class="radar"></div>
-            <h3 style="margin-bottom:8px;">Menganalisa...</h3>
-            <p style="color:var(--sub); font-size:13px; word-break: break-all; margin-bottom: 24px;">${latest.target}</p>
+            <div id="scanPercent">Sedang Menyiapkan...</div>
+            <p style="color:var(--sub); font-size:13px; word-break: break-all; margin-top: 5px; margin-bottom: 24px;">Memproses: ${latest.target}</p>
             <button class="btn btn-danger" style="padding: 10px 20px; width: auto; font-size: 13px; border-radius: 12px; display: inline-flex; align-items: center; gap: 8px; margin: 0 auto; box-shadow: 0 4px 15px rgba(239, 68, 68, 0.2);" onclick="cancelScanByTarget('${safeTargetName}')">
                 <span style="font-size: 16px;">✕</span> Batalkan Scan
             </button>
@@ -456,14 +435,14 @@ function generateEngineHTML(item) {
         return (badA === badB) ? 0 : badA ? -1 : 1;
     });
     
-    keys.forEach((engine, idx) => {
+    keys.forEach((engine) => {
         let res = resultsObj[engine]; 
         let cat = res.category ? res.category.toLowerCase() : "";
         let isBad = cat === "malicious" || cat === "suspicious" || cat === "malware" || cat === "infected";
         let icon = isBad ? '⚠️' : '✅';
         let resultText = isBad ? (res.result || "Terdeteksi Bahaya") : "Bersih";
         
-        html += `<div class="engine-item" style="animation-delay: ${idx < 20 ? (idx * 0.05) : 0}s"><span class="engine-name"><span class="glass-icon" style="width:28px; height:28px; font-size:12px;">${icon}</span> ${engine}</span><span class="engine-result ${isBad ? 'e-bad':'e-good'}">${resultText}</span></div>`;
+        html += `<div class="engine-item"><span class="engine-name"><span class="glass-icon" style="width:28px; height:28px; font-size:12px;">${icon}</span> ${engine}</span><span class="engine-result ${isBad ? 'e-bad':'e-good'}">${resultText}</span></div>`;
     });
     return html + `</div>`;
 }
@@ -477,7 +456,7 @@ function openHistoryDetail(index) {
 }
 function closeModal() { document.getElementById('detailModal').classList.remove('show'); }
 
-// SCANNER LOGIC DENGAN FITUR ABORT
+// SCANNER LOGIC DENGAN FITUR ABORT & PERSENTASE
 async function calculateLocalHash(file) {
     const buffer = await file.arrayBuffer(); const hashBuffer = await crypto.subtle.digest('SHA-256', buffer);
     return Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, '0')).join('');
@@ -490,6 +469,16 @@ async function pollAnalysis(id, name) {
             try {
                 const res = await fetch(`/api/scan/poll/${id}`); 
                 const data = await res.json();
+                
+                // --- Update Text Persentase (Jika ada dari API) ---
+                if (data.data) {
+                    const progressVal = data.data.attributes.progress;
+                    const percentEl = document.getElementById('scanPercent');
+                    if(percentEl) {
+                        percentEl.innerText = (progressVal !== undefined && progressVal !== null) ? `${progressVal}%` : "Menganalisa...";
+                    }
+                }
+
                 if (data.data && data.data.attributes.status === "completed") {
                     clearInterval(activePolls[id].interval);
                     delete activePolls[id];
@@ -498,10 +487,8 @@ async function pollAnalysis(id, name) {
                     updateHistoryData(name, (stats.malicious > 0 || stats.suspicious > 0) ? "RISK" : "SAFE", stats, results);
                     showToast("Analisis Selesai!");
                 }
-            } catch (e) { 
-                // Biarkan jika gagal 1 kali, interval akan mengulang lagi (Kecuali dicancel manual)
-            }
-        }, 10000)
+            } catch (e) {}
+        }, 3000)
     };
 }
 
@@ -514,80 +501,44 @@ async function scanHandler(type) {
         targetName = input.length > 30 ? input.substring(0,20)+"..." : input;
         
         if(/^[a-fA-F0-9]{32,64}$/.test(input)) { 
-            endpoint = `/api/scan/hash/${input}`; 
-            type = 'hash'; 
+            endpoint = `/api/scan/hash/${input}`; type = 'hash'; 
         } else { 
             endpoint = "/api/scan/url"; 
             options = { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ url: input }) }; 
         }
     } else if (type === 'file') {
         const file = document.getElementById('fileUploader').files[0]; 
-        if(!file) return; 
-        targetName = file.name;
+        if(!file) return; targetName = file.name;
         if (file.size > 4 * 1024 * 1024) return showToast("Max file 4MB!");
         
-        switchNav('view-home', 0); 
-        saveHistory(targetName, "PROCESS");
-        
+        switchNav('view-home', 0); saveHistory(targetName, "PROCESS");
         const localHash = await calculateLocalHash(file);
         try {
             const hashCheck = await fetch(`/api/scan/hash/${localHash}`);
             if (hashCheck.ok) {
                 const data = await hashCheck.json();
-                if (data.data) { 
-                    updateHistoryData(targetName, (data.data.attributes.last_analysis_stats.malicious > 0) ? "RISK" : "SAFE", data.data.attributes.last_analysis_stats, data.data.attributes.last_analysis_results); 
-                    return showToast("Instan dari Database!"); 
-                }
+                if (data.data) { updateHistoryData(targetName, (data.data.attributes.last_analysis_stats.malicious > 0) ? "RISK" : "SAFE", data.data.attributes.last_analysis_stats, data.data.attributes.last_analysis_results); return showToast("Instan dari Database!"); }
             }
         } catch(e) {}
         
-        endpoint = "/api/scan/file"; 
-        const formData = new FormData(); formData.append("file", file); 
-        options = { method: "POST", body: formData }; 
-        type = 'upload';
+        endpoint = "/api/scan/file"; const formData = new FormData(); formData.append("file", file); options = { method: "POST", body: formData }; type = 'upload';
     }
     
-    if(type !== 'file' && type !== 'upload') { 
-        switchNav('view-home', 0); 
-        saveHistory(targetName, "PROCESS"); 
-    }
+    if(type !== 'file' && type !== 'upload') { switchNav('view-home', 0); saveHistory(targetName, "PROCESS"); }
     
-    // Mencegah scan dobel
-    if (abortControllers[targetName]) {
-        return showToast("Sedang diproses, harap tunggu.");
-    }
+    if (abortControllers[targetName]) return showToast("Sedang diproses, harap tunggu.");
     
-    // Aktifkan AbortController untuk tombol cancel
-    const controller = new AbortController();
-    abortControllers[targetName] = controller;
-    options.signal = controller.signal;
+    const controller = new AbortController(); abortControllers[targetName] = controller; options.signal = controller.signal;
 
     try {
-        const response = await fetch(endpoint, options); 
-        const data = await response.json();
-        
-        // Fetch selesai, hapus kontroler
+        const response = await fetch(endpoint, options); const data = await response.json();
         delete abortControllers[targetName];
 
-        if (type === 'hash' && data.data) { 
-            updateHistoryData(targetName, (data.data.attributes.last_analysis_stats.malicious > 0) ? "RISK" : "SAFE", data.data.attributes.last_analysis_stats, data.data.attributes.last_analysis_results); 
-            return; 
-        }
+        if (type === 'hash' && data.data) { updateHistoryData(targetName, (data.data.attributes.last_analysis_stats.malicious > 0) ? "RISK" : "SAFE", data.data.attributes.last_analysis_stats, data.data.attributes.last_analysis_results); return; }
         
-        if (data.data && data.data.id) { 
-            pollAnalysis(data.data.id, targetName); 
-        } else { 
-            updateHistoryData(targetName, "GAGAL", null, null); 
-            showToast("Error dari API Server"); 
-        }
+        if (data.data && data.data.id) { pollAnalysis(data.data.id, targetName); } else { updateHistoryData(targetName, "GAGAL", null, null); showToast("Error dari API Server"); }
     } catch (e) { 
-        if (e.name === 'AbortError') {
-            console.log('Proses fetch sengaja dibatalkan pengguna');
-        } else {
-            showToast("Koneksi gagal atau server mati."); 
-            updateHistoryData(targetName, "GAGAL", null, null);
-            delete abortControllers[targetName];
-        }
+        if (e.name !== 'AbortError') { showToast("Koneksi gagal atau server mati."); updateHistoryData(targetName, "GAGAL", null, null); delete abortControllers[targetName]; }
     }
 }
 
