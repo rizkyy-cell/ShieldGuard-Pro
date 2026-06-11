@@ -3,6 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <title>ShieldGuard Security</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -92,7 +95,7 @@ body.light .glass-icon { background: rgba(255,255,255,0.6); border: 1px solid rg
     width: 100%; height: 100%;
     object-fit: cover;
     z-index: 0;
-    opacity: 0.4; /* Ubah angka ini (0.1 - 1.0) untuk transparansi video */
+    opacity: 0.8; /* Terang dan bening */
     pointer-events: none;
     border-radius: inherit;
 }
@@ -102,9 +105,7 @@ body.light .glass-icon { background: rgba(255,255,255,0.6); border: 1px solid rg
 }
 
 /* BANNER */
-/* BANNER */
 .banner { margin: 0 16px; padding: 24px; background: rgba(255, 255, 255, 0.05); position: relative; overflow: hidden; border: 1px solid rgba(255, 255, 255, 0.2); }
-
 body.light .banner { border: 1px solid rgba(15, 23, 42, 0.1); }
 .banner h1 { font-size: 24px; margin-bottom: 8px; font-weight: 700; color: #fff; }
 .banner p { font-size: 14px; color: rgba(255,255,255,0.9); }
@@ -144,7 +145,7 @@ body.light .input-group input:focus { background: rgba(0,0,0,0.06); }
 .btn:active { transform: scale(0.96); }
 .btn-danger { background: rgba(239, 68, 68, 0.15); color: var(--danger); box-shadow: none; border: 1px solid rgba(239, 68, 68, 0.3); }
 
-/* ACTIVITY LIST */
+/* ACTIVITY LIST & BADGES */
 .activity { padding: 16px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; font-size: 14px; cursor: pointer; transition: 0.3s; }
 .activity:active { transform: scale(0.98); }
 .activity span.name { max-width: 60%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 500; }
@@ -152,6 +153,7 @@ body.light .input-group input:focus { background: rgba(0,0,0,0.06); }
 .safe { color: #4ade80; background: rgba(34, 197, 94, 0.15); border: 1px solid rgba(34, 197, 94, 0.3); } 
 .warning { color: #f87171; background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.3); } 
 .process { color: #60a5fa; background: rgba(79, 124, 255, 0.15); border: 1px solid rgba(79, 124, 255, 0.3); }
+.canceled { color: #cbd5e1; background: rgba(203, 213, 225, 0.15); border: 1px solid rgba(203, 213, 225, 0.3); } /* Badge untuk scan yang dibatalkan */
 
 /* ENGINE RESULTS */
 .radar-container { text-align: center; padding: 40px 20px; }
@@ -169,7 +171,7 @@ body.light .target-title { background: rgba(0,0,0,0.03); border: 1px solid rgba(
 body.light .engine-item { border-bottom: 1px solid rgba(0,0,0,0.05); }
 .engine-item:last-child { border-bottom: none; }
 .engine-name { font-weight: 500; display: flex; align-items: center; gap: 10px; }
-.engine-result { font-weight: 600; font-size: 12px; }
+.engine-result { font-weight: 600; font-size: 12px; text-align: right; max-width: 50%; word-wrap: break-word; }
 .e-bad { color: #f87171; } .e-good { color: #4ade80; }
 
 /* FLOATING DOCK (BOTTOM NAV) */
@@ -209,11 +211,7 @@ img.profile-img {
     object-fit: contain;
     transition: 0.3s;
 }
-
-/* FIX BUG: Ikon sosial media menjadi hilang saat light mode */
-body.light .social-icon-img {
-    filter: brightness(0); /* Sebelumnya invert(1) membuat ikon kembali putih, ini membuatnya hitam pekat */
-}
+body.light .social-icon-img { filter: brightness(0); }
 </style>
 </head>
 <body>
@@ -226,10 +224,8 @@ body.light .social-icon-img {
 <div id="view-home" class="view active">
     <div class="banner glass">
         <video autoplay loop muted playsinline class="bg-video">
-            <source <video autoplay loop muted playsinline class="bg-video">
-    <source src="bg-video.mp4" type="video/mp4">
-</video>
-        
+            <source src="bg-video.mp4" type="video/mp4">
+        </video>
         <div class="content-wrapper">
             <h1>Cloud Secured</h1>
             <p>Sistem Backend Vercel aktif melindungi perangkat Anda secara real-time.</p>
@@ -279,11 +275,9 @@ body.light .social-icon-img {
     <div class="section">
         
         <div class="scan-card glass profile-card" style="text-align: center; position: relative; overflow: hidden;">
-            
             <video autoplay loop muted playsinline class="bg-video">
-                <source <video autoplay loop muted playsinline class="bg-video">
-    <source src="bg-video-profile.mp4" type="video/mp4">
-</video>
+                <source src="bg-video-profile.mp4" type="video/mp4">
+            </video>
             
             <div class="content-wrapper">
                 <img src="profile.png" alt="Profile" class="profile-img" onerror="this.onerror=null; this.src='https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png';">
@@ -338,6 +332,27 @@ body.light .social-icon-img {
 </div>
 
 <script>
+// STATE UNTUK PEMBATALAN (CANCEL SCAN)
+let activePolls = {}; 
+let abortControllers = {};
+
+function cancelScanByTarget(targetName) {
+    // 1. Batalkan request jika sedang upload file atau fetch internet awal
+    if (abortControllers[targetName]) {
+        abortControllers[targetName].abort();
+        delete abortControllers[targetName];
+    }
+    // 2. Batalkan interval proses pengecekan radar (polling)
+    for (let id in activePolls) {
+        if (activePolls[id].name === targetName) {
+            clearInterval(activePolls[id].interval);
+            delete activePolls[id];
+        }
+    }
+    updateHistoryData(targetName, "BATAL", null, null);
+    showToast("Pemindaian Dibatalkan!");
+}
+
 // UI LOGIC
 function switchNav(viewId, index) {
     document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
@@ -345,7 +360,6 @@ function switchNav(viewId, index) {
     const navItems = document.querySelectorAll('.nav-item');
     navItems.forEach(n => n.classList.remove('active'));
     navItems[index].classList.add('active');
-    if(viewId === 'view-home' || viewId === 'view-history') renderData();
 }
 
 const themeBtn = document.getElementById("themeToggleBtn");
@@ -378,96 +392,206 @@ function updateHistoryData(target, newStatus, stats, results) {
         renderData();
     }
 }
-function clearHistory() { if(confirm("Hapus semua riwayat?")) { localStorage.removeItem("scanHistory"); renderData(); showToast("Riwayat bersih."); } }
+function clearHistory() { 
+    if(confirm("Hapus semua riwayat?")) { 
+        // Bersihkan memori HP dari riwayat dan proses yang nyangkut
+        for (let target in abortControllers) abortControllers[target].abort();
+        for (let id in activePolls) clearInterval(activePolls[id].interval);
+        abortControllers = {}; activePolls = {};
+        
+        localStorage.removeItem("scanHistory"); 
+        renderData(); 
+        showToast("Riwayat berhasil dibersihkan."); 
+    } 
+}
 
 // RENDER LOGIC
 function renderData() {
     const history = getHistory();
     const fullList = document.getElementById("fullActivityList");
     const homeEngine = document.getElementById("homeEngineDetails");
+    
     if (history.length === 0) {
         fullList.innerHTML = `<div class="scan-card glass empty-state">Belum ada aktivitas tersimpan.</div>`;
         homeEngine.innerHTML = `<div class="scan-card glass empty-state">Lakukan pemindaian untuk melihat analisis mesin keamanan.</div>`;
         return;
     }
+    
     fullList.innerHTML = history.map((item, index) => {
-        let css = item.status === "SAFE" ? "safe" : (item.status === "RISK" ? "warning" : "process");
-        return `<div class="activity glass" onclick="openHistoryDetail(${index})"><span class="name">${item.target}</span><span class="status-badge ${css}">${item.status === "PROCESS" ? "Memproses" : item.status}</span></div>`;
+        let css = item.status === "SAFE" ? "safe" : (item.status === "RISK" ? "warning" : (item.status === "BATAL" ? "canceled" : "process"));
+        let statusText = item.status === "PROCESS" ? "Memproses" : (item.status === "BATAL" ? "Dibatalkan" : item.status);
+        return `<div class="activity glass" onclick="openHistoryDetail(${index})"><span class="name">${item.target}</span><span class="status-badge ${css}">${statusText}</span></div>`;
     }).join("");
+    
     const latest = history[0];
     if (latest.status === "PROCESS") {
-        homeEngine.innerHTML = `<div class="radar-container glass"><div class="radar"></div><h3 style="margin-bottom:8px;">Menganalisa...</h3><p style="color:var(--sub); font-size:13px; word-break: break-all;">${latest.target}</p></div>`;
-    } else if (latest.results) { homeEngine.innerHTML = generateEngineHTML(latest); }
+        const safeTargetName = latest.target.replace(/'/g, "\\'"); // Menghindari bug nama file petik
+        homeEngine.innerHTML = `
+        <div class="radar-container glass" style="padding: 30px 20px;">
+            <div class="radar"></div>
+            <h3 style="margin-bottom:8px;">Menganalisa...</h3>
+            <p style="color:var(--sub); font-size:13px; word-break: break-all; margin-bottom: 24px;">${latest.target}</p>
+            <button class="btn btn-danger" style="padding: 10px 20px; width: auto; font-size: 13px; border-radius: 12px; display: inline-flex; align-items: center; gap: 8px; margin: 0 auto; box-shadow: 0 4px 15px rgba(239, 68, 68, 0.2);" onclick="cancelScanByTarget('${safeTargetName}')">
+                <span style="font-size: 16px;">✕</span> Batalkan Scan
+            </button>
+        </div>`;
+    } else if (latest.results) { 
+        homeEngine.innerHTML = generateEngineHTML(latest); 
+    } else if (latest.status === "BATAL") {
+        homeEngine.innerHTML = `<div class="scan-card glass empty-state" style="text-align:center;">Scan Terakhir Dibatalkan<br><span style="font-size:12px;color:var(--sub)">${latest.target}</span></div>`;
+    }
 }
 
 function generateEngineHTML(item) {
     const total = item.stats.malicious + item.stats.suspicious + item.stats.undetected + item.stats.harmless;
     const isRisk = item.stats.malicious > 0 || item.stats.suspicious > 0;
     let html = `<div class="target-title glass">${item.target}</div><div class="engine-summary glass"><h2 style="color:${isRisk ? "var(--danger)":"var(--success)"}">${item.stats.malicious + item.stats.suspicious} <span style="font-size:16px; color:var(--sub);">/ ${total}</span></h2><p>Mesin Mendeteksi Bahaya</p></div><div class="engine-list glass">`;
-    let keys = Object.keys(item.results).sort((a, b) => {
-        let badA = item.results[a].category === "malicious" || item.results[a].category === "suspicious";
-        let badB = item.results[b].category === "malicious" || item.results[b].category === "suspicious";
+    
+    let resultsObj = item.results || {};
+    let keys = Object.keys(resultsObj).sort((a, b) => {
+        let catA = resultsObj[a].category ? resultsObj[a].category.toLowerCase() : "";
+        let catB = resultsObj[b].category ? resultsObj[b].category.toLowerCase() : "";
+        let badA = catA === "malicious" || catA === "suspicious" || catA === "malware";
+        let badB = catB === "malicious" || catB === "suspicious" || catB === "malware";
         return (badA === badB) ? 0 : badA ? -1 : 1;
     });
+    
     keys.forEach((engine, idx) => {
-        let res = item.results[engine]; let isBad = res.category === "malicious" || res.category === "suspicious";
+        let res = resultsObj[engine]; 
+        let cat = res.category ? res.category.toLowerCase() : "";
+        let isBad = cat === "malicious" || cat === "suspicious" || cat === "malware" || cat === "infected";
         let icon = isBad ? '⚠️' : '✅';
-        html += `<div class="engine-item" style="animation-delay: ${idx < 20 ? (idx * 0.05) : 0}s"><span class="engine-name"><span class="glass-icon" style="width:28px; height:28px; font-size:12px;">${icon}</span> ${engine}</span><span class="engine-result ${isBad ? 'e-bad':'e-good'}">${isBad ? res.result : "Bersih"}</span></div>`;
+        let resultText = isBad ? (res.result || "Terdeteksi Bahaya") : "Bersih";
+        
+        html += `<div class="engine-item" style="animation-delay: ${idx < 20 ? (idx * 0.05) : 0}s"><span class="engine-name"><span class="glass-icon" style="width:28px; height:28px; font-size:12px;">${icon}</span> ${engine}</span><span class="engine-result ${isBad ? 'e-bad':'e-good'}">${resultText}</span></div>`;
     });
     return html + `</div>`;
 }
 
 function openHistoryDetail(index) {
-    const item = getHistory()[index]; if (item.status === "PROCESS") return showToast("Masih proses...");
+    const item = getHistory()[index]; 
+    if (item.status === "PROCESS") return showToast("Masih memproses, bisa dibatalkan di Home.");
+    if (item.status === "BATAL" || item.status === "GAGAL") return showToast("Tidak ada detail, proses dihentikan.");
     document.getElementById('modalContentBody').innerHTML = generateEngineHTML(item);
     document.getElementById('detailModal').classList.add('show');
 }
 function closeModal() { document.getElementById('detailModal').classList.remove('show'); }
 
-// SCANNER LOGIC (API VERCEL)
+// SCANNER LOGIC DENGAN FITUR ABORT
 async function calculateLocalHash(file) {
     const buffer = await file.arrayBuffer(); const hashBuffer = await crypto.subtle.digest('SHA-256', buffer);
     return Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, '0')).join('');
 }
+
 async function pollAnalysis(id, name) {
-    const interval = setInterval(async () => {
-        try {
-            const res = await fetch(`/api/scan/poll/${id}`); const data = await res.json();
-            if (data.data && data.data.attributes.status === "completed") {
-                clearInterval(interval);
-                const stats = data.data.attributes.stats; const results = data.data.attributes.results;
-                updateHistoryData(name, (stats.malicious > 0 || stats.suspicious > 0) ? "RISK" : "SAFE", stats, results);
-                showToast("Analisis Selesai!");
+    activePolls[id] = {
+        name: name,
+        interval: setInterval(async () => {
+            try {
+                const res = await fetch(`/api/scan/poll/${id}`); 
+                const data = await res.json();
+                if (data.data && data.data.attributes.status === "completed") {
+                    clearInterval(activePolls[id].interval);
+                    delete activePolls[id];
+                    const stats = data.data.attributes.stats; 
+                    const results = data.data.attributes.results;
+                    updateHistoryData(name, (stats.malicious > 0 || stats.suspicious > 0) ? "RISK" : "SAFE", stats, results);
+                    showToast("Analisis Selesai!");
+                }
+            } catch (e) { 
+                // Biarkan jika gagal 1 kali, interval akan mengulang lagi (Kecuali dicancel manual)
             }
-        } catch (e) { clearInterval(interval); }
-    }, 10000);
+        }, 10000)
+    };
 }
+
 async function scanHandler(type) {
-    try {
-        let endpoint = "", options = {}, targetName = "";
-        if (type === 'text') {
-            const input = document.getElementById('urlInput').value.trim(); if(!input) return showToast("Isi URL/Hash!");
-            targetName = input.length > 30 ? input.substring(0,20)+"..." : input;
-            if(/^[a-fA-F0-9]{32,64}$/.test(input)) { endpoint = `/api/scan/hash/${input}`; type = 'hash'; }
-            else { endpoint = "/api/scan/url"; options = { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ url: input }) }; }
-        } else if (type === 'file') {
-            const file = document.getElementById('fileUploader').files[0]; if(!file) return; targetName = file.name;
-            if (file.size > 4 * 1024 * 1024) return showToast("Max file 4MB!");
-            switchNav('view-home', 0); saveHistory(targetName, "PROCESS");
-            const localHash = await calculateLocalHash(file);
+    let endpoint = "", options = {}, targetName = "";
+    
+    if (type === 'text') {
+        const input = document.getElementById('urlInput').value.trim(); 
+        if(!input) return showToast("Isi URL/Hash!");
+        targetName = input.length > 30 ? input.substring(0,20)+"..." : input;
+        
+        if(/^[a-fA-F0-9]{32,64}$/.test(input)) { 
+            endpoint = `/api/scan/hash/${input}`; 
+            type = 'hash'; 
+        } else { 
+            endpoint = "/api/scan/url"; 
+            options = { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ url: input }) }; 
+        }
+    } else if (type === 'file') {
+        const file = document.getElementById('fileUploader').files[0]; 
+        if(!file) return; 
+        targetName = file.name;
+        if (file.size > 4 * 1024 * 1024) return showToast("Max file 4MB!");
+        
+        switchNav('view-home', 0); 
+        saveHistory(targetName, "PROCESS");
+        
+        const localHash = await calculateLocalHash(file);
+        try {
             const hashCheck = await fetch(`/api/scan/hash/${localHash}`);
             if (hashCheck.ok) {
                 const data = await hashCheck.json();
-                if (data.data) { updateHistoryData(targetName, (data.data.attributes.last_analysis_stats.malicious > 0) ? "RISK" : "SAFE", data.data.attributes.last_analysis_stats, data.data.attributes.last_analysis_results); return showToast("Instan dari Database!"); }
+                if (data.data) { 
+                    updateHistoryData(targetName, (data.data.attributes.last_analysis_stats.malicious > 0) ? "RISK" : "SAFE", data.data.attributes.last_analysis_stats, data.data.attributes.last_analysis_results); 
+                    return showToast("Instan dari Database!"); 
+                }
             }
-            endpoint = "/api/scan/file"; const formData = new FormData(); formData.append("file", file); options = { method: "POST", body: formData }; type = 'upload';
+        } catch(e) {}
+        
+        endpoint = "/api/scan/file"; 
+        const formData = new FormData(); formData.append("file", file); 
+        options = { method: "POST", body: formData }; 
+        type = 'upload';
+    }
+    
+    if(type !== 'file' && type !== 'upload') { 
+        switchNav('view-home', 0); 
+        saveHistory(targetName, "PROCESS"); 
+    }
+    
+    // Mencegah scan dobel
+    if (abortControllers[targetName]) {
+        return showToast("Sedang diproses, harap tunggu.");
+    }
+    
+    // Aktifkan AbortController untuk tombol cancel
+    const controller = new AbortController();
+    abortControllers[targetName] = controller;
+    options.signal = controller.signal;
+
+    try {
+        const response = await fetch(endpoint, options); 
+        const data = await response.json();
+        
+        // Fetch selesai, hapus kontroler
+        delete abortControllers[targetName];
+
+        if (type === 'hash' && data.data) { 
+            updateHistoryData(targetName, (data.data.attributes.last_analysis_stats.malicious > 0) ? "RISK" : "SAFE", data.data.attributes.last_analysis_stats, data.data.attributes.last_analysis_results); 
+            return; 
         }
-        if(type !== 'file' && type !== 'upload') { switchNav('view-home', 0); saveHistory(targetName, "PROCESS"); }
-        const response = await fetch(endpoint, options); const data = await response.json();
-        if (type === 'hash' && data.data) { updateHistoryData(targetName, (data.data.attributes.last_analysis_stats.malicious > 0) ? "RISK" : "SAFE", data.data.attributes.last_analysis_stats, data.data.attributes.last_analysis_results); return; }
-        if (data.data) { if(data.data.id) pollAnalysis(data.data.id, targetName); } else { updateHistoryData(targetName, "GAGAL", null, null); showToast("Error Server"); }
-    } catch (e) { showToast("Koneksi gagal"); }
+        
+        if (data.data && data.data.id) { 
+            pollAnalysis(data.data.id, targetName); 
+        } else { 
+            updateHistoryData(targetName, "GAGAL", null, null); 
+            showToast("Error dari API Server"); 
+        }
+    } catch (e) { 
+        if (e.name === 'AbortError') {
+            console.log('Proses fetch sengaja dibatalkan pengguna');
+        } else {
+            showToast("Koneksi gagal atau server mati."); 
+            updateHistoryData(targetName, "GAGAL", null, null);
+            delete abortControllers[targetName];
+        }
+    }
 }
+
+// Inisialisasi awal
 renderData();
 </script>
 </body>
